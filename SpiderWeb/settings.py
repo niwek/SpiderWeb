@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Product',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -62,6 +63,16 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': os.path.join(BASE_DIR, 'KWL'),
+#         'USER': 'admin',
+#         'PASSWORD': 'abcd1234',
+#         'HOST': '',
+#         'PORT': '8090',
+#     }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/

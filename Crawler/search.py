@@ -9,7 +9,6 @@ import urllib
 import re
 import urlutils
 from bs4 import BeautifulSoup
-from threading import *
 
 
 URL_REGEX = r'(?:href)=\"(.*?)\"'
@@ -21,7 +20,7 @@ def url_content(url_string):
     for content in contents:
         print content.strip()
 
-def get_all_links(next_url, lst_urls, read_urls, lock):
+def get_all_links(next_url, lst_urls, read_urls):
     try:
         f = urllib.urlopen(next_url)
     except IOError:
@@ -35,37 +34,33 @@ def get_all_links(next_url, lst_urls, read_urls, lock):
         else: continue
         if urlutils.check_valid(this_url) and this_url not in lst_urls and this_url not in read_urls:
             print this_url
-            lock.acquire()
-            try:    
-                lst_urls.append(this_url)
-            finally:
-                lock.release()
+
+            lst_urls.append(this_url)
+
+
     f.close()
 
 def search(base_url):
     lst_urls = [base_url]
     read_urls = []
-    lock = Lock()
+
     
     while lst_urls:
         next_url = lst_urls.pop()
         read_urls.append(next_url)
         print "Urls that still need to be checked: " + str(len(lst_urls))
         print "Urls read so far: " + str(len(read_urls))
-        thread = Thread(target = get_all_links, args = (next_url, lst_urls, read_urls, lock))
-        thread.start()
-        thread.join()
-#         contents = f.readlines()
-#         for content in contents:
-#             content = content.strip()
-#             result = re.search(URL_REGEX, content)
-#             this_url = ""
-#             if result:
-#                 this_url = urlutils.formatUrl(result.group(1))
-#                 
-#                 if urlutils.check_valid(this_url) and this_url not in lst_urls and this_url not in read_urls:
-#                     print this_url
-#                     lst_urls.append(this_url)
+        contents = f.readlines()
+        for content in contents:
+            content = content.strip()
+            result = re.search(URL_REGEX, content)
+            this_url = ""
+            if result:
+                this_url = urlutils.formatUrl(result.group(1))
+                 
+                if urlutils.check_valid(this_url) and this_url not in lst_urls and this_url not in read_urls:
+                    print this_url
+                    lst_urls.append(this_url)
 def main():
     '''
     Main function();
