@@ -6,12 +6,13 @@ Created on Nov 12, 2014
 
 import sys
 import urllib
+import urllib2
 import re
 import urlutils
 from bs4 import BeautifulSoup
 
 
-URL_REGEX = r'(?:href)=\"(.*?)\"'
+#URL_REGEX = r'(?:href)=\"(?P<link>.*?)\"'
 BASE_URL = 'https://www.webstaurantstore.com'
 
 def url_content(url_string):
@@ -40,7 +41,10 @@ def get_all_links(next_url, lst_urls, read_urls):
 
     f.close()
 
-def search(base_url):
+def search():
+    _search(BASE_URL)
+
+def _search(base_url):
     lst_urls = [base_url]
     read_urls = []
 
@@ -48,16 +52,23 @@ def search(base_url):
     while lst_urls:
         next_url = lst_urls.pop()
         read_urls.append(next_url)
+        
+        ## PRINT STATEMENTS ##
         print "Urls that still need to be checked: " + str(len(lst_urls))
         print "Urls read so far: " + str(len(read_urls))
-        contents = f.readlines()
-        for content in contents:
-            content = content.strip()
-            result = re.search(URL_REGEX, content)
-            this_url = ""
-            if result:
-                this_url = urlutils.formatUrl(result.group(1))
-                 
+        ## END PRINT STATEMENTS ##
+        
+        try:
+            f = urllib2.urlopen(next_url)
+        except:
+            continue
+        
+        soup = BeautifulSoup(f.read())
+        
+        for content in soup.find_all('a'):
+            if content.get('href'):
+                this_url =  urlutils.formatUrl(content.get('href'))
+            
                 if urlutils.check_valid(this_url) and this_url not in lst_urls and this_url not in read_urls:
                     print this_url
                     lst_urls.append(this_url)
@@ -65,7 +76,7 @@ def main():
     '''
     Main function();
     '''
-    search(BASE_URL)
+    search()
 
 if __name__ == "__main__":
     sys.exit(main())
