@@ -36,20 +36,21 @@ def test_beautiful_soup():
     for link in soup.find_all('a'):
         print urlutils.formatUrl(link.get('href'))
     f.close()
-    
+
+def _display_lst(lst):
+    if type(lst) is not list:
+        raise TypeError('_display_lst: ' + lst + ' Not type list')
+    for element in lst:
+        print element
+
 def test_product_categories():
     links = webstaurantstoreUtils.get_base()
+    links_to_be_copied = []
     for link in links:
-        f = urllib.urlopen(link)
-        soup = BeautifulSoup(f.read())
-        for li in soup.find_all(class_='grid-item grid-parent'):
-            #print li
-            if li.name == 'span' and li.find('a'):
-                print urlutils.formatUrl(li.a.get('href'))
-                    
-            elif li.name == 'a':
-                print urlutils.formatUrl(li.get('href'))
-        
+        links_to_be_copied += webstaurantstoreUtils.get_level_one(link)
+    links = links_to_be_copied
+    
+    _display_lst(links)
         
             
 def main():

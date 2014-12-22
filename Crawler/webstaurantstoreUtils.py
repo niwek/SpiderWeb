@@ -25,21 +25,23 @@ def get_base():
         
     return links
 
-def get_level_one(urls):
+def get_level_one(url):
     links = []
     try:
-        f =urllib2.urlopen(BASE_URL)
+        f =urllib2.urlopen(url)
         soup = BeautifulSoup(f.read())
         for link in soup.find_all(class_='grid-item grid-parent'):
-            if link.name == 'span':
+            if link.name == 'span' and link.find('a'):
                 links.append(urlutils.formatUrl(link.a.get('href')))
             elif link.name == 'a':
                 links.append(urlutils.formatUrl(link.get('href')))
         
     except urllib2.URLError:
-        print "Error connection to: " + BASE_URL
+        print "Error connection to: " + url
     finally:
         f.close()
+    
+    return links
 
 if __name__ == '__main__':
     pass
